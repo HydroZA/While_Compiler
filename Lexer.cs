@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 
 namespace lex
 {
-    public class Matcher
+    public class Lexer
     {
+        public Lexer()
+        { 
+        }
         public bool Nullable(Rexp r) => r switch
         { 
             ZERO _ => false,
@@ -227,7 +226,7 @@ namespace lex
 
         public List<(string, string)> RemoveWhitespace (List<(string, string)> lst) => lst.Where(x => x.Item1 != "WS" || x.Item1 != "COM").ToList();
 
-        public Val Lex (Rexp r, string s)
+        private Val GetValues (Rexp r, string s)
         {
             if (s.Length == 0)
             {
@@ -241,11 +240,12 @@ namespace lex
                 char c = s[0];
                 s = s.Substring(1);
                 var (r_simp, f_simp) = Simplify(Derive(c, r));
-                return Inject(r, c, f_simp(Lex(r_simp, s)));
+                return Inject(r, c, f_simp(GetValues(r_simp, s)));
             }
         }
 
-
+        public List<(string, string)> Lex (Rexp r, string s) => Environment(GetValues(r, s));
+        
 /*        public bool Match(Rexp r, string s)
         {
             return nullable(ders(s, r));
