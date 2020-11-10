@@ -1,11 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
 namespace lex
 {
-    public abstract class Rexp {}
+
+    public abstract class Rexp 
+    {
+        public static Rexp StringToRexp(string s) 
+        {
+            Rexp r;
+            if (s.Length == 0)
+                r = new ONE();
+            else
+            {
+                char c = s[0];
+                s = s.Substring(1);
+                r = s.Length == 1 ? (Rexp) new CHAR(c) : new SEQ(new CHAR(c), StringToRexp(s));
+            }
+            return r;
+        }
+        public static implicit operator Rexp (string s) => StringToRexp(s);
+        
+    }
     public sealed class ZERO : Rexp
     {
         public ZERO() { }
