@@ -17,6 +17,7 @@ namespace lex
             ALT alt => Nullable(alt.r1) || Nullable(alt.r2),
             SEQ seq => Nullable(seq.r1) && Nullable(seq.r2),
             STAR _ => true,
+            RECD recd => Nullable(recd.r),
             RANGE _ => false,
             PLUS pl => Nullable(pl.r),
             OPTIONAL _ => true,
@@ -44,6 +45,7 @@ namespace lex
             STAR star => new SEQ(Derive(c, star.r), new STAR(star.r)),
             RANGE rng => Derive(c, new CFUN(rng.s)),
             PLUS plus => new SEQ(Derive(c, plus.r), new STAR(plus.r)),
+            RECD recd => Derive(c, recd.r),
             OPTIONAL opt => Derive(c, opt.r),
             NTIMES nt => nt.n == 0 ? (Rexp) new ZERO() : new SEQ(Derive(c, nt.r), new NTIMES(nt.r, nt.n - 1)),
             UPTO upto => upto.m switch
@@ -67,7 +69,7 @@ namespace lex
                 false => new ZERO()
             },
             ALL => Derive(c, new CFUN()),
-            _ => throw new System.Exception("GOT UNKNOWN REXP")
+            //_ => throw new System.Exception("GOT UNKNOWN REXP")
         };
 
 /*        public Rexp ders(string s, Rexp r) 
