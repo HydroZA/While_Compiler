@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace lex
 {
-    class WhileLexingRules
+    public static class WhileLexingRules
     {
         // Lexing Rules for WHILE Language
-        private static Rexp DIGIT = new RANGE("0123456789".ToHashSet());
+        private static readonly Rexp DIGIT = new RANGE("0123456789".ToHashSet());
 
         private static Rexp KEYWORD =
             new ALT("skip",
@@ -26,7 +26,7 @@ namespace lex
             "false"
         )))))))))));
 
-        private static Rexp OPERATOR =
+        private static readonly Rexp OPERATOR =
             new ALT(":=",
             new ALT("=",
             new ALT("-",
@@ -44,27 +44,27 @@ namespace lex
             "=="
         ))))))))))))));
 
-        private static Rexp LETTER = new RANGE("ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz".ToHashSet());
+        private static readonly Rexp LETTER = new RANGE("ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz".ToHashSet());
 
-        private static Rexp SYMBOL = new ALT(LETTER, new RANGE("._><=;,:\\".ToHashSet()));
+        private static readonly Rexp SYMBOL = new ALT(LETTER, new RANGE("._><=;,:\\".ToHashSet()));
 
-        private static Rexp LPAREN = new ALT("{", "(");
+        private static readonly Rexp LPAREN = new ALT("{", "(");
 
-        private static Rexp RPAREN = new ALT("}", ")");
+        private static readonly Rexp RPAREN = new ALT("}", ")");
 
-        private static Rexp SEMICOLON = ";";
+        private static readonly Rexp SEMICOLON = ";";
 
-        private static Rexp WHITESPACE = new ALT(new PLUS(" "), new ALT("\n", "\t"));
+        private static readonly Rexp WHITESPACE = new ALT(new PLUS(" "), new ALT("\n", "\t"));
 
-        private static Rexp IDENTIFIER = new SEQ(LETTER, new STAR(new ALT("-", new ALT(LETTER, DIGIT))));
+        private static readonly Rexp IDENTIFIER = new SEQ(LETTER, new STAR(new ALT("-", new ALT(LETTER, DIGIT))));
 
-        private static Rexp NUMBER = new ALT("0", new SEQ(new RANGE("123456789".ToHashSet()), new STAR(DIGIT)));
+        private static readonly Rexp NUMBER = new ALT("0", new SEQ(new RANGE("123456789".ToHashSet()), new STAR(DIGIT)));
 
-        private static Rexp COMMENT = new SEQ("//", new STAR(new ALT(DIGIT, new ALT(" ", SYMBOL))));
+        private static readonly Rexp COMMENT = new SEQ("//", new STAR(new ALT(DIGIT, new ALT(" ", SYMBOL))));
 
-        private static Rexp STRING = new SEQ("\"", new SEQ(new STAR(new ALT(SYMBOL, new ALT(WHITESPACE, DIGIT))), "\""));
+        private static readonly Rexp STRING = new SEQ("\"", new SEQ(new STAR(new ALT(SYMBOL, new ALT(WHITESPACE, DIGIT))), "\""));
 
-        public Rexp WHILE_REGS =
+        public static readonly Rexp rules =
             new STAR(
                 new ALT(
                     new RECD("KEYWORD", KEYWORD),
