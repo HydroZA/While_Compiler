@@ -41,7 +41,7 @@ namespace lex
 
         private static readonly Rexp SEMICOLON = ";";
 
-        private static readonly Rexp WHITESPACE = new ALT(new ALT(new PLUS(new CHAR(' ')), new CHAR('\n')), new CHAR('\t'));//new ALT(new PLUS(" "), new ALT("\n", "\t"));
+        private static readonly Rexp WHITESPACE = new ALT(new ALT(new PLUS(new CHAR(' ')), Environment.NewLine), new CHAR('\t'));//new ALT(new PLUS(" "), new ALT("\n", "\t"));
 
         private static readonly Rexp IDENTIFIER = new SEQ(LETTER, new STAR(new ALT(new ALT(new CHAR('_'), LETTER),  DIGIT)));//new SEQ(LETTER, new STAR(new ALT("-", new ALT(LETTER, DIGIT))));
 

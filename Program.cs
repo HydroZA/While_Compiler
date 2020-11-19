@@ -19,8 +19,22 @@ namespace lex
             //Rexp rules = new STAR(new RECD("LPAR", ch));
             Rexp rules = WhileLexingRules.rules;
 
-            string prog = "memes";
-            foreach ((string, string) x  in lexer.Lex(rules, prog))
+            string prog = @"write Fib
+read n;
+minus1:= 0;
+(minus2) := 1;
+while n > 0 do
+{
+temp:= minus2;
+minus2:= minus1 + minus2;
+minus1:= temp;
+n:= n - 1
+};
+write ""Result"";
+write minus2;
+";
+            //string prog = @"n:= n - 1";
+            foreach ((string, string) x  in lexer.RemoveWhitespace(lexer.Lex(rules, prog)))
             {
                 Console.WriteLine($"{x.Item1}\t{x.Item2}");
             }

@@ -248,12 +248,6 @@ namespace lex
                 else
                     throw new Exception("Unable to Lex");
             }
-            else if (s.Length == 1)
-            {
-                char c = s[0];
-                var (r_simp, f_simp) = Simplify(Derive(c, r));
-                return Inject(r, c, f_simp(Mkeps(r_simp)));
-            }
             else
             {
                 char c = s[0];
@@ -263,21 +257,18 @@ namespace lex
             }
         }
 
-        public List<(string, string)> Lex (Rexp r, string s) => Environment(GetValues(r, s));
-        
-/*        public bool Match(Rexp r, string s)
-        {
-            return nullable(ders(s, r));
-        }*/
+        private string[] SplitLines(string s) => s.Split(System.Environment.NewLine.ToCharArray());
 
-        public int Size(Rexp r) => r switch
+        public List<(string, string)> Lex(Rexp r, string s)
         {
-            ZERO _ => 1,
-            ONE _ => 1,
-            CHAR _ => 1,
-            ALT alt => 1 + Size(alt.r1) + Size(alt.r2),
-            SEQ seq => 1 + Size(seq.r1) + Size(seq.r2),
-            STAR star => 1 + Size(star.r)
-        };
+            List<(string, string)> output = new List<(string, string)>();
+            string[] lines = SplitLines(s);
+
+            foreach (string line in lines)
+            {
+                output = output.Concat(Environment(GetValues(r, line))).ToList();
+            }
+            return output;
+        }
     }
 }
