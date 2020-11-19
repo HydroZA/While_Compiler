@@ -14,11 +14,16 @@ namespace lex
             Rexp r;
             if (s.Length == 0)
                 r = new ONE();
+            else if (s.Length == 1)
+            {
+                char c = s[0];
+                r = new CHAR(c);
+            }
             else
             {
                 char c = s[0];
                 s = s.Substring(1);
-                r = s.Length == 1 ? (Rexp) new CHAR(c) : new SEQ(new CHAR(c), StringToRexp(s));
+                r = new SEQ(new CHAR(c), StringToRexp(s));
             }
             return r;
         }

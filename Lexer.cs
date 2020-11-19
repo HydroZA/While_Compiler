@@ -7,10 +7,10 @@ namespace lex
     public class Lexer
     {
         public Lexer()
-        { 
+        {
         }
         public bool Nullable(Rexp r) => r switch
-        { 
+        {
             ZERO _ => false,
             ONE _ => true,
             CHAR _ => false,
@@ -47,10 +47,17 @@ namespace lex
             PLUS plus => new SEQ(Derive(c, plus.r), new STAR(plus.r)),
             RECD recd => Derive(c, recd.r),
             OPTIONAL opt => Derive(c, opt.r),
-            NTIMES nt => nt.n == 0 ? (Rexp) new ZERO() : new SEQ(Derive(c, nt.r), new NTIMES(nt.r, nt.n - 1)),
+            //NTIMES nt => nt.n == 0 ? (Rexp) new ZERO() : new SEQ(Derive(c, nt.r), new NTIMES(nt.r, nt.n - 1)),
+            NTIMES nt => nt.n switch
+            {
+                0 => new ZERO(),
+                1 => Derive(c, nt.r),
+                _ => new SEQ(Derive(c, nt.r), new NTIMES(nt.r, nt.n - 1))
+            },
             UPTO upto => upto.m switch
             {
                 0 => new ZERO(),
+                1 => Derive(c, upto.r),
                 _ => new SEQ(Derive(c, upto.r), new UPTO(upto.r, upto.m - 1))
             },
             FROM frm => frm.n == 0 ? new SEQ(Derive(c, frm.r), new STAR(r)) : new SEQ(Derive(c, frm.r), new FROM(frm.r, frm.n - 1)),
@@ -69,23 +76,23 @@ namespace lex
                 false => new ZERO()
             },
             ALL => Derive(c, new CFUN()),
-            //_ => throw new System.Exception("GOT UNKNOWN REXP")
+            _ => throw new System.Exception("GOT UNKNOWN REXP")
         };
 
-/*        public Rexp ders(string s, Rexp r) 
-        {
-            switch (s.Length)
-            {
-                case 0:
-                    return r;
-                default:
+        /*        public Rexp ders(string s, Rexp r) 
                 {
-                    char c = s[0];
-                    s = s.Substring(1);
-                    return ders(s, simp(der(c, r)));
-                }
-            }
-        }*/
+                    switch (s.Length)
+                    {
+                        case 0:
+                            return r;
+                        default:
+                        {
+                            char c = s[0];
+                            s = s.Substring(1);
+                            return ders(s, simp(der(c, r)));
+                        }
+                    }
+                }*/
 
         public string Flatten(Val v) => v switch
         {
@@ -95,18 +102,20 @@ namespace lex
             Right right => Flatten(right.v),
             Sequ seq => Flatten(seq.v1) + Flatten(seq.v2),
             Stars stars => string.Join("", stars.vs.Select(Flatten).ToList()),
-            Rec rec => Flatten(rec.v)
+            Rec rec => Flatten(rec.v),
+            _ => throw new System.Exception("GOT UNKNOWN VALUE")
         };
 
         public List<(string, string)> Environment(Val v) => v switch
         {
-            Empty => null,
-            Chr chr => null,
+            Empty => new List<(string, string)>(),
+            Chr chr => new List<(string, string)>(),
             Left left => Environment(left.v),
             Right right => Environment(right.v),
             Sequ seq => Environment(seq.v1).Concat(Environment(seq.v2)).ToList(),
             Stars stars => stars.vs.SelectMany(Environment).ToList(),
             Rec rec => Environment(rec.v).Prepend((rec.x, Flatten(rec.v))).ToList(),
+            _ => throw new System.Exception("GOT UNKNOWN VALUE")
         };
 
         public Val Mkeps(Rexp r) => r switch
@@ -114,18 +123,19 @@ namespace lex
             ONE _ => new Empty(),
             ALT alt => Nullable(alt.r1) ? (Val)new Left(Mkeps(alt.r1)) : new Right(Mkeps(alt.r2)),
             SEQ seq => new Sequ(Mkeps(seq.r1), Mkeps(seq.r2)),
-            STAR _ => new Stars(null),
+            STAR _ => new Stars(new List<Val>()),
             RECD recd => new Rec(recd.x, Mkeps(recd.r)),
             PLUS pl => new Stars(Mkeps(pl.r).ToList()),
-            OPTIONAL _ => new Stars(null),
-            NTIMES nt => new Stars(Enumerable.Repeat(Mkeps(nt.r), nt.n).ToList())
+            OPTIONAL _ => new Stars(new List<Val>()),
+            NTIMES nt => new Stars(Enumerable.Repeat(Mkeps(nt.r), nt.n).ToList()),
+            _ => throw new System.Exception("GOT UNKNOWN REXP")
         };
 
         public Val Inject(Rexp r, char c, Val v) => (r, v) switch
         {
             (STAR st, Sequ se) => se.v2 switch
             {
-                Stars vs => new Stars(vs.vs.Prepend(Inject(st.r, c, se.v1)).ToList())
+                Stars vs => vs.vs == null ? new Stars(new List<Val>() { Inject(st.r, c, se.v1) }) : new Stars(vs.vs.Prepend(Inject(st.r, c, se.v1)).ToList())
             },
 
             (SEQ sr, Sequ sv) => new Sequ(Inject(sr.r1, c, sv.v1), sv.v2),
@@ -158,7 +168,8 @@ namespace lex
             (NTIMES nt, Sequ seq) => seq.v2 switch
             {
                 Stars stars => new Stars(stars.vs.Prepend(Inject(nt.r, c, seq.v1)).ToList())
-            }
+            },
+            _ => throw new Exception("GOT UNKNOWN VALUE")
         };
 
         // Rectification functions for simplification
@@ -167,12 +178,12 @@ namespace lex
         public Func<Val, Val> F_LEFT(Func<Val, Val> f) => (Val v) => new Left(f(v));
         public Func<Val, Val> F_ALT(Func<Val, Val> f1, Func<Val, Val> f2) => (Val v) => v switch
         {
-            Right right => new Right(f2(v)),
-            Left left => new Left(f1(v))
+            Right right => new Right(f2(right.v)),
+            Left left => new Left(f1(left.v))
         };
         public Func<Val, Val> F_SEQ(Func<Val, Val> f1, Func<Val, Val> f2) => (Val v) => v switch
         {
-           Sequ sequ => new Sequ(f1(sequ.v1), f2(sequ.v2))
+            Sequ sequ => new Sequ(f1(sequ.v1), f2(sequ.v2))
         };
 
         public Func<Val, Val> F_SEQ_EMPTY1(Func<Val, Val> f1, Func<Val, Val> f2) => (Val v) => new Sequ(f1(new Empty()), f2(v));
@@ -181,7 +192,7 @@ namespace lex
         {
             Rec rec => new Rec(rec.x, f(rec.v))
         };
-        public Func<Val, Val> F_ERROR() => throw new Exception("Error");
+        public Func<Val, Val> F_ERROR() => (Val v) => throw new Exception("Error");
 
         public (Rexp, Func<Val, Val>) Simplify(Rexp r)
         {
@@ -226,7 +237,7 @@ namespace lex
             }
         }
 
-        public List<(string, string)> RemoveWhitespace (List<(string, string)> lst) => lst.Where(x => x.Item1 != "WS" || x.Item1 != "COM").ToList();
+        public List<(string, string)> RemoveWhitespace (List<(string, string)> lst) => lst.Where(x => x.Item1 != "WHITESPACE" && x.Item1 != "COMMENT").ToList();
 
         private Val GetValues (Rexp r, string s)
         {
@@ -236,6 +247,12 @@ namespace lex
                     return Mkeps(r);
                 else
                     throw new Exception("Unable to Lex");
+            }
+            else if (s.Length == 1)
+            {
+                char c = s[0];
+                var (r_simp, f_simp) = Simplify(Derive(c, r));
+                return Inject(r, c, f_simp(Mkeps(r_simp)));
             }
             else
             {
