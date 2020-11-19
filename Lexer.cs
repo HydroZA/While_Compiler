@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace lex
 {
@@ -238,7 +239,8 @@ namespace lex
         }
 
         public List<(string, string)> RemoveWhitespace (List<(string, string)> lst) => lst.Where(x => x.Item1 != "WHITESPACE" && x.Item1 != "COMMENT").ToList();
-
+        public string RemoveWhitespaceFromString(string s) => Regex.Replace(s.Trim(), @"\/\/.*$", new MatchEvaluator(x => ""));
+        
         private Val GetValues (Rexp r, string s)
         {
             if (s.Length == 0)
@@ -261,12 +263,22 @@ namespace lex
 
         public List<(string, string)> Lex(Rexp r, string s)
         {
+            /*  Here I split the input into individual lines and lex them one by one.
+            *   I found this to significantly improve the lexing time over lexing the entire program in one go
+            */
             List<(string, string)> output = new List<(string, string)>();
             string[] lines = SplitLines(s);
 
             foreach (string line in lines)
             {
-                output = output.Concat(Environment(GetValues(r, line))).ToList();
+                // Remove comments from the line to reduce lexing workload
+                string lineNoCommments = RemoveWhitespaceFromString(line);
+
+                output = output.Concat(
+                    RemoveWhitespace(
+                        Environment(
+                            GetValues(r, lineNoCommments))))
+                    .ToList();
             }
             return output;
         }

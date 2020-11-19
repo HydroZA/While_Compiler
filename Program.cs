@@ -11,32 +11,28 @@ namespace lex
         public static void Main ()
         {
             Lexer lexer = new Lexer();
-            /*  Rexp LPAR = new ALT(new CHAR('('), new CHAR('{'));
-              Rexp RPAR = new ALT(new CHAR(')'), new CHAR('}'));
-              Rexp rules = new STAR(new ALT(new RECD("LPAR", LPAR), new RECD("RPAR", RPAR)));
-            */
-            //Rexp ch = new CHAR('(');
-            //Rexp rules = new STAR(new RECD("LPAR", ch));
+
             Rexp rules = WhileLexingRules.rules;
 
-            string prog = @"write Fib
-read n;
-minus1:= 0;
-(minus2) := 1;
-while n > 0 do
-{
-temp:= minus2;
-minus2:= minus1 + minus2;
-minus1:= temp;
-n:= n - 1
-};
-write ""Result"";
-write minus2;
+            string prog = @"start := 1000;
+x := start;
+y := start;
+z := start;
+while 0 < x do {
+ while 0 < y do {
+  while 0 < z do {
+    z := z - 1
+  };
+  z := start;
+  y := y - 1
+ };     
+ y := start;
+ x := x - 1
+}
 ";
-            //string prog = @"n:= n - 1";
             foreach ((string, string) x  in lexer.RemoveWhitespace(lexer.Lex(rules, prog)))
             {
-                Console.WriteLine($"{x.Item1}\t{x.Item2}");
+                Console.WriteLine($"(\"{x.Item1}\", \"{x.Item2}\"),");
             }
         }
     }
