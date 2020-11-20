@@ -6,20 +6,6 @@ using System.Threading.Tasks;
 
 namespace lex
 {
-    public enum TokenType
-    {
-        KEYWORD,
-        IDENTIFIER,
-        OPERATOR,
-        NUMBER,
-        SEMICOLON,
-        STRING,
-        LPAREN,
-        RPAREN,
-        COMMENT,
-        WHITESPACE
-    }
-
     public static class WhileLexingRules
     {
         // Lexing Rules for WHILE Language
