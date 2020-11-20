@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Pidgin;
 using static Pidgin.Parser;
+using lex;
 
 namespace Parser
 {
@@ -30,7 +31,7 @@ namespace Parser
         }
 
         // For accepting the output of the Lexer
-        public Block Parse (List<(string, string)> tokens)
+        public Block Parse (List<(TokenType, string)> tokens)
         {
 
         }
@@ -84,7 +85,15 @@ namespace Parser
                     select (ArithmeticExpression)new ArithmeticOperation(ArithOperationType.DIVIDE, x, y)
                 ),
                 
-                // Option 3 -- Fa
+                // Option 3 -- Modulus
+                Try (
+                    from x in Fa
+                    from op in Char('%')
+                    from y in Te
+                    select (ArithmeticExpression) new ArithmeticOperation(ArithOperationType.MODULO, x, y)
+                    ),
+
+                // Option 4 -- Fa
                 Fa
             );
 
@@ -109,6 +118,7 @@ namespace Parser
                 // Option 3 -- Te
                 Te
             );
+
 
         // boolean expression parser
         static Pidgin.Parser<char, BooleanExpression> BooleanParser =
