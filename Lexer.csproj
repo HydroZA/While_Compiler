@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FDAA1E89-D961-44E9-9EA7-5D868D8DF71C}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>cw1</RootNamespace>
-    <AssemblyName>cw1</AssemblyName>
+    <RootNamespace>lex</RootNamespace>
+    <AssemblyName>lex</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

@@ -9,7 +9,7 @@ namespace lex
     class Program
     {
         public static void Main ()
-        {
+       {
             Lexer lexer = new Lexer();
 
             Rexp rules = WhileLexingRules.rules;

@@ -11,22 +11,6 @@ namespace lex
         // Lexing Rules for WHILE Language
         private static readonly Rexp DIGIT = new RANGE("0123456789".ToHashSet());
 
-        /*
-        private static readonly Rexp KEYWORD =
-            new ALT("skip",
-            new ALT("while",
-            new ALT("do",
-            new ALT("if",
-            new ALT("then",
-            new ALT("else",
-            new ALT("read",
-            new ALT("write",
-            new ALT("for",
-            new ALT("to",
-            new ALT("true",
-            "false"
-        )))))))))));
-        */
         private static readonly Rexp KEYWORD = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("skip", "while"), "do"), "if"), "then"), "else"), "read"), "write"), "for"), "to"), "true"), "false");
 
         private static readonly Rexp OPERATOR = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(":=", "="), "-"), "+"), "*"), "!="), "<"), ">"), "<="), ">="), "||"), "&&"), "%"), "!"), "==");
@@ -41,15 +25,15 @@ namespace lex
 
         private static readonly Rexp SEMICOLON = ";";
 
-        private static readonly Rexp WHITESPACE = new ALT(new ALT(new PLUS(new CHAR(' ')), Environment.NewLine), new CHAR('\t'));//new ALT(new PLUS(" "), new ALT("\n", "\t"));
+        private static readonly Rexp WHITESPACE = new ALT(new ALT(new PLUS(new CHAR(' ')), Environment.NewLine), new CHAR('\t'));
 
-        private static readonly Rexp IDENTIFIER = new SEQ(LETTER, new STAR(new ALT(new ALT(new CHAR('_'), LETTER),  DIGIT)));//new SEQ(LETTER, new STAR(new ALT("-", new ALT(LETTER, DIGIT))));
+        private static readonly Rexp IDENTIFIER = new SEQ(LETTER, new STAR(new ALT(new ALT(new CHAR('_'), LETTER),  DIGIT)));
 
-        private static readonly Rexp NUMBER = new ALT(new CHAR('0'), new SEQ(new RANGE("123456789".ToHashSet()), new STAR(DIGIT)));//new ALT("0", new SEQ(new RANGE("123456789".ToHashSet()), new STAR(DIGIT)));
+        private static readonly Rexp NUMBER = new ALT(new CHAR('0'), new SEQ(new RANGE("123456789".ToHashSet()), new STAR(DIGIT)));
 
-        private static readonly Rexp COMMENT = new SEQ("//", new STAR(new ALT(new ALT(new ALT(DIGIT, " "), SYMBOL), LETTER)));//new SEQ("//", new STAR(new ALT(DIGIT, new ALT(" ", SYMBOL))));
+        private static readonly Rexp COMMENT = new SEQ("//", new STAR(new ALT(new ALT(new ALT(DIGIT, " "), SYMBOL), LETTER)));
 
-        private static readonly Rexp STRING = new SEQ(new SEQ(new CHAR('\"'), new STAR(new ALT(new ALT(SYMBOL, WHITESPACE), DIGIT))), "\"");//new SEQ("\"", new SEQ(new STAR(new ALT(SYMBOL, new ALT(WHITESPACE, DIGIT))), "\""));
+        private static readonly Rexp STRING = new SEQ(new SEQ(new CHAR('\"'), new STAR(new ALT(new ALT(SYMBOL, WHITESPACE), DIGIT))), "\"");
 
         public static readonly Rexp rules =
             new STAR(
