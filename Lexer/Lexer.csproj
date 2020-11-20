@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FDAA1E89-D961-44E9-9EA7-5D868D8DF71C}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>lex</RootNamespace>
     <AssemblyName>lex</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ConsoleTables, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Week 2\re1\packages\ConsoleTables.2.4.2\lib\net40\ConsoleTables.dll</HintPath>
@@ -53,6 +56,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rexp.cs" />
+    <Compile Include="TokenType.cs" />
     <Compile Include="TupleExtension.cs" />
     <Compile Include="Val.cs" />
     <Compile Include="WhileLexingRules.cs" />
