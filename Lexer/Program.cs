@@ -30,7 +30,7 @@ while 0 < x do {
  x := x - 1
 }
 ";
-            foreach ((string, string) x  in lexer.RemoveWhitespace(lexer.Lex(rules, prog)))
+            foreach ((TokenType, string) x  in lexer.RemoveWhitespace(lexer.Lex(rules, prog)))
             {
                 Console.WriteLine($"(\"{x.Item1}\", \"{x.Item2}\"),");
             }
