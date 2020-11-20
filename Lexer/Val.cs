@@ -57,10 +57,10 @@ namespace lex
     }
     public sealed class Rec : Val
     {
-        public string x;
+        public TokenType x;
         public Val v;
 
-        public Rec(string x, Val v)
+        public Rec(TokenType x, Val v)
         {
             this.x = x;
             this.v = v;

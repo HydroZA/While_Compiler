@@ -175,10 +175,10 @@ namespace lex
 
     public sealed class RECD : Rexp
     {
-        public string x;
+        public TokenType x;
         public Rexp r;
 
-        public RECD(string x, Rexp r)
+        public RECD(TokenType x, Rexp r)
         {
             this.x = x;
             this.r = r;

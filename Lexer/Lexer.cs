@@ -107,10 +107,10 @@ namespace lex
             _ => throw new System.Exception("GOT UNKNOWN VALUE")
         };
 
-        public List<(string, string)> Environment(Val v) => v switch
+        public List<(TokenType, string)> Environment(Val v) => v switch
         {
-            Empty => new List<(string, string)>(),
-            Chr chr => new List<(string, string)>(),
+            Empty => new List<(TokenType, string)>(),
+            Chr chr => new List<(TokenType, string)>(),
             Left left => Environment(left.v),
             Right right => Environment(right.v),
             Sequ seq => Environment(seq.v1).Concat(Environment(seq.v2)).ToList(),
@@ -238,7 +238,7 @@ namespace lex
             }
         }
 
-        public List<(string, string)> RemoveWhitespace (List<(string, string)> lst) => lst.Where(x => x.Item1 != "WHITESPACE" && x.Item1 != "COMMENT").ToList();
+        public List<(TokenType, string)> RemoveWhitespace (List<(TokenType, string)> lst) => lst.Where(x => x.Item1 != TokenType.WHITESPACE && x.Item1 != TokenType.COMMENT).ToList();
         public string RemoveWhitespaceFromString(string s) => Regex.Replace(s.Trim(), @"\/\/.*$", new MatchEvaluator(x => ""));
         
         private Val GetValues (Rexp r, string s)
@@ -261,12 +261,12 @@ namespace lex
 
         private string[] SplitLines(string s) => s.Split(System.Environment.NewLine.ToCharArray());
 
-        public List<(string, string)> Lex(Rexp r, string s)
+        public List<(TokenType, string)> Lex(Rexp r, string s)
         {
             /*  Here I split the input into individual lines and lex them one by one.
             *   I found this to significantly improve the lexing time over lexing the entire program in one go
             */
-            List<(string, string)> output = new List<(string, string)>();
+            List<(TokenType, string)> output = new List<(TokenType, string)>();
             string[] lines = SplitLines(s);
 
             foreach (string line in lines)

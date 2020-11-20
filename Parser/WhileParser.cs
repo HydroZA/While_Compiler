@@ -14,11 +14,26 @@ namespace Parser
         {
 
         }
+
+        // For parsing strings directly
         public Block Parse (string s)
         {
-            return BlockParser.ParseOrThrow(s);
+            try
+            {
+                return BlockParser.ParseOrThrow(s);
+            }
+            catch (ParseException)
+            {
+                Console.WriteLine("Unable to Parse");
+                throw;
+            }
         }
 
+        // For accepting the output of the Lexer
+        public Block Parse (List<(string, string)> tokens)
+        {
+
+        }
 
         // Identifier Parser
         static readonly Pidgin.Parser<char, string> IdentifierParser =

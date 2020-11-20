@@ -6,34 +6,48 @@ using System.Threading.Tasks;
 
 namespace lex
 {
+    public enum TokenType
+    {
+        KEYWORD,
+        IDENTIFIER,
+        OPERATOR,
+        NUMBER,
+        SEMICOLON,
+        STRING,
+        LPAREN,
+        RPAREN,
+        COMMENT,
+        WHITESPACE
+    }
+
     public static class WhileLexingRules
     {
         // Lexing Rules for WHILE Language
-        private static readonly Rexp DIGIT = new RANGE("0123456789".ToHashSet());
+        private static readonly Rexp rDIGIT = new RANGE("0123456789".ToHashSet());
 
-        private static readonly Rexp KEYWORD = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("skip", "while"), "do"), "if"), "then"), "else"), "read"), "write"), "for"), "to"), "true"), "false");
+        private static readonly Rexp rKEYWORD = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("skip", "while"), "do"), "if"), "then"), "else"), "read"), "write"), "for"), "to"), "true"), "false");
 
-        private static readonly Rexp OPERATOR = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(":=", "="), "-"), "+"), "*"), "!="), "<"), ">"), "<="), ">="), "||"), "&&"), "%"), "!"), "==");
+        private static readonly Rexp rOPERATOR = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(":=", "="), "-"), "+"), "*"), "!="), "<"), ">"), "<="), ">="), "||"), "&&"), "%"), "!"), "==");
 
-        private static readonly Rexp LETTER = new RANGE("ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz".ToHashSet());
+        private static readonly Rexp rLETTER = new RANGE("ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz".ToHashSet());
 
-        private static readonly Rexp SYMBOL = new ALT(LETTER, new RANGE("._><=;,:\\".ToHashSet()));
+        private static readonly Rexp rSYMBOL = new ALT(rLETTER, new RANGE("._><=;,:\\".ToHashSet()));
 
-        private static readonly Rexp LPAREN = new ALT("{", "(");
+        private static readonly Rexp rLPAREN = new ALT("{", "(");
 
-        private static readonly Rexp RPAREN = new ALT("}", ")");
+        private static readonly Rexp rRPAREN = new ALT("}", ")");
 
-        private static readonly Rexp SEMICOLON = ";";
+        private static readonly Rexp rSEMICOLON = ";";
 
-        private static readonly Rexp WHITESPACE = new ALT(new ALT(new PLUS(new CHAR(' ')), Environment.NewLine), new CHAR('\t'));
+        private static readonly Rexp rWHITESPACE = new ALT(new ALT(new PLUS(new CHAR(' ')), Environment.NewLine), new CHAR('\t'));
 
-        private static readonly Rexp IDENTIFIER = new SEQ(LETTER, new STAR(new ALT(new ALT(new CHAR('_'), LETTER),  DIGIT)));
+        private static readonly Rexp rIDENTIFIER = new SEQ(rLETTER, new STAR(new ALT(new ALT(new CHAR('_'), rLETTER),  rDIGIT)));
 
-        private static readonly Rexp NUMBER = new ALT(new CHAR('0'), new SEQ(new RANGE("123456789".ToHashSet()), new STAR(DIGIT)));
+        private static readonly Rexp rNUMBER = new ALT(new CHAR('0'), new SEQ(new RANGE("123456789".ToHashSet()), new STAR(rDIGIT)));
 
-        private static readonly Rexp COMMENT = new SEQ("//", new STAR(new ALT(new ALT(new ALT(DIGIT, " "), SYMBOL), LETTER)));
+        private static readonly Rexp rCOMMENT = new SEQ("//", new STAR(new ALT(new ALT(new ALT(rDIGIT, " "), rSYMBOL), rLETTER)));
 
-        private static readonly Rexp STRING = new SEQ(new SEQ(new CHAR('\"'), new STAR(new ALT(new ALT(SYMBOL, WHITESPACE), DIGIT))), "\"");
+        private static readonly Rexp rSTRING = new SEQ(new SEQ(new CHAR('\"'), new STAR(new ALT(new ALT(rSYMBOL, rWHITESPACE), rDIGIT))), "\"");
 
         public static readonly Rexp rules =
             new STAR(
@@ -46,16 +60,16 @@ namespace lex
                                         new ALT(
                                             new ALT(
                                                 new ALT(
-                                                    new RECD("KEYWORD", KEYWORD),
-                                                new RECD("IDENTIFIER", IDENTIFIER)),
-                                            new RECD("OPERATOR", OPERATOR)),
-                                        new RECD("NUMBER", NUMBER)),
-                                    new RECD("SEMI-COLON", SEMICOLON)),
-                                new RECD("STRING", STRING)),
-                            new RECD("LPAR", LPAREN)),
-                        new RECD("RPAR", RPAREN)),
-                    new RECD("COMMENT", COMMENT)),
-                new RECD("WHITESPACE", WHITESPACE))
+                                                    new RECD(TokenType.KEYWORD, rKEYWORD),
+                                                new RECD(TokenType.IDENTIFIER, rIDENTIFIER)),
+                                            new RECD(TokenType.OPERATOR, rOPERATOR)),
+                                        new RECD(TokenType.NUMBER, rNUMBER)),
+                                    new RECD(TokenType.SEMICOLON, rSEMICOLON)),
+                                new RECD(TokenType.STRING, rSTRING)),
+                            new RECD(TokenType.LPAREN, rLPAREN)),
+                        new RECD(TokenType.RPAREN, rRPAREN)),
+                    new RECD(TokenType.COMMENT, rCOMMENT)),
+                new RECD(TokenType.WHITESPACE, rWHITESPACE))
             );
 
     }
