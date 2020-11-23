@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using Parser;
 
 namespace Interpreter
 {
     public class Interpreter
     {
-        private Dictionary<string, int> Environment;
+        public Dictionary<string, int> Environment;
 
         public Interpreter()
         {
             Environment = new Dictionary<string, int>();
         }
 
-        public string Interpret(Block code)
+        public Dictionary<string, int> Interpret(Block code)
         {
             EvaluateBlock(code);
+            return Environment;
         }
 
         private void EvaluateBlock(Block code)
@@ -25,20 +27,72 @@ namespace Interpreter
             while (code.statements.Count > 0)
             {
                 EvaluateStatement(code.statements[i]);
+                i++;
             }
         }
 
         private void EvaluateStatement(Statement s)
         {
-            s switch
+            switch (s)
             {
-                // C# does not have a "do nothing" statement, so we just return true into the void
-                Skip => true,
-                Assign aexp => 
-
-
-            }
+                case Skip:
+                    break;
+                case Assign aexp:
+                    {
+                        Environment.Add(aexp.s, EvaluateArithmeticExpression(aexp.a));
+                        break;
+                    }
+                case If i:
+                    {
+                        if (EvaluateBooleanExpression(i.a))
+                        {
+                            EvaluateBlock(i.bl1);
+                        }
+                        else
+                        {
+                            EvaluateBlock(i.bl2);
+                        }
+                        break;
+                    }
+                case While w:
+                    {
+                        while (EvaluateBooleanExpression(w.b))
+                        {
+                            EvaluateBlock(w.bl);
+                        }
+                        break;
+                    }
+                case Write wr:
+                    {
+                        // write could either be for a string or variable
+                        if (wr.s[0] == '\"')
+                        {
+                            // Use a regex to strip the " from the string
+                            Console.WriteLine(Regex.Replace(wr.s, @"""", ""));
+                        }
+                        else
+                        {
+                            // write the variable contents to stdOut
+                            Console.WriteLine(Environment.GetValueOrDefault(wr.s));
+                        }
+                        break;
+                    }
+                case Read r:
+                    {
+                        try
+                        {
+                            Environment.Add(r.id, Int32.Parse(Console.ReadLine()));
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Read only accepts integer input, exiting");
+                        }
+                        break;
+                    }
+            };
         }
+
+        
 
         private int EvaluateArithmeticExpression(ArithmeticExpression aexp) =>
             aexp switch
