@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace lex
+namespace Lexer
 {
     public static class WhileLexingRules
     {
@@ -13,7 +13,9 @@ namespace lex
 
         private static readonly Rexp rKEYWORD = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("skip", "while"), "do"), "if"), "then"), "else"), "read"), "write"), "for"), "to"), "true"), "false"), ":=");
 
-        private static readonly Rexp rOPERATOR = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("==", "!="), "<"), ">"), "<="), ">="), "||"), "&&"), "!");
+        private static readonly Rexp rOPERATOR = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("==", "!="), "<"), ">"), "<="), ">="), "!");
+
+        private static readonly Rexp rCOMPOUND_BOOL = new ALT("||", "&&");
 
         private static readonly Rexp rARITH_OP = new ALT(new ALT(new ALT(new ALT("-", "+"), "*"), "/"), "%");
 
@@ -49,10 +51,12 @@ namespace lex
                                             new ALT(
                                                 new ALT(
                                                     new ALT(
-                                                        new RECD(TokenType.KEYWORD, rKEYWORD),
-                                                    new RECD(TokenType.IDENTIFIER, rIDENTIFIER)),
-                                                new RECD(TokenType.OPERATOR, rOPERATOR)),
-                                            new RECD(TokenType.ARITH_OP, rARITH_OP)),
+                                                        new ALT(
+                                                            new RECD(TokenType.KEYWORD, rKEYWORD),
+                                                        new RECD(TokenType.IDENTIFIER, rIDENTIFIER)),
+                                                    new RECD(TokenType.OPERATOR, rOPERATOR)),
+                                                new RECD(TokenType.ARITH_OP, rARITH_OP)),
+                                            new RECD(TokenType.COMP_BOOL_OP, rCOMPOUND_BOOL)),
                                         new RECD(TokenType.NUMBER, rNUMBER)),
                                     new RECD(TokenType.SEMICOLON, rSEMICOLON)),
                                 new RECD(TokenType.STRING, rSTRING)),
