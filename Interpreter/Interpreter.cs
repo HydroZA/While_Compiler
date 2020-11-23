@@ -23,11 +23,9 @@ namespace Interpreter
 
         private void EvaluateBlock(Block code)
         {
-            int i = 0;
-            while (code.statements.Count > 0)
+            for (int i = 0; i < code.statements.Count; i++)
             {
                 EvaluateStatement(code.statements[i]);
-                i++;
             }
         }
 
@@ -39,7 +37,7 @@ namespace Interpreter
                     break;
                 case Assign aexp:
                     {
-                        Environment.Add(aexp.s, EvaluateArithmeticExpression(aexp.a));
+                        Environment.AddOrUpdate(aexp.s, EvaluateArithmeticExpression(aexp.a));
                         break;
                     }
                 case If i:
@@ -81,7 +79,7 @@ namespace Interpreter
                     {
                         try
                         {
-                            Environment.Add(r.id, Int32.Parse(Console.ReadLine()));
+                            Environment.AddOrUpdate(r.id, Int32.Parse(Console.ReadLine()));
                         }
                         catch (Exception)
                         {
