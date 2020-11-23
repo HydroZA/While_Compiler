@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using lex;
+using Lexer;
 
 namespace Parser
 {
@@ -21,30 +21,44 @@ namespace Parser
         {
             t.Reverse();
             this.tokens = new Stack<(TokenType, string)>(t);
-            return StatementsParser();
+            return BlockParser();
 
         }
 
         /*
          * Pattern:
-         * 1. Pop
+         * 1. Peek
          * 2. Check
-         * 3. Match? return else Push
+         * 3. Match? Pop else return NoMatchException
          */
-        private ArithOperationType DefineArithmeticOperator((TokenType, string) token)
+
+        private ArithOperationType DefineAEArithmeticOperator((TokenType, string) token)
         {
             if (token.Item1 != TokenType.ARITH_OP)
             {
-                throw new Exception("Call to define Arithmetic Operator with invalid TokenType");
+                throw new NoMatchException("Call to define Arithmetic Operator with invalid TokenType");
+            }
+            return token.Item2 switch
+            {
+                "+" => ArithOperationType.PLUS,
+                "-" => ArithOperationType.MINUS,
+                _ => throw new NoMatchException("Token was not a valid arithmetic operator")
+            };
+        }
+
+
+        private ArithOperationType DefineTeArithmeticOperator((TokenType, string) token)
+        {
+            if (token.Item1 != TokenType.ARITH_OP)
+            {
+                throw new NoMatchException("Call to define Arithmetic Operator with invalid TokenType");
             }
             return token.Item2 switch
             {
                 "*" => ArithOperationType.TIMES,
                 "/" => ArithOperationType.DIVIDE,
                 "%" => ArithOperationType.MODULO,
-                "+" => ArithOperationType.PLUS,
-                "-" => ArithOperationType.MINUS,
-                _ => throw new NoMatchException("Token was not a valid arithmetic operator"),
+                _ => throw new NoMatchException("Token was not a valid arithmetic operator")
             };
         }
 
@@ -52,7 +66,7 @@ namespace Parser
         {
             if (token.Item1 != TokenType.OPERATOR)
             {
-                throw new Exception ("Call to define Boolean Operator with invalid TokenType");
+                throw new NoMatchException("Call to define Boolean Operator with invalid TokenType");
             }
             return token.Item2 switch
             {
@@ -62,153 +76,258 @@ namespace Parser
                 ">" => BoolOperationType.GREATER_THAN,
                 "<=" => BoolOperationType.LESS_THAN_OR_EQUAL,
                 ">=" => BoolOperationType.GREATER_THAN_OR_EQUAL,
-                _ => throw new NoMatchException("Token was not a valid Boolean operator"),
+                _ => throw new NoMatchException("Token was not a valid Boolean operator")
             };
         }
 
-        private ArithmeticExpression Fa()
+        // ================
+        // Arithmetic Parsers
+        // ================
+        private ArithmeticExpression ArithInBrackets()
         {
-            
-            var firstToken = tokens.Pop();
-
-            switch (firstToken.Item1)
+            if (tokens.Peek().Item1 == TokenType.LPAREN)
             {
-                // Option 1 -- In Brackets
-                case TokenType.LPAREN:
-                {
-                        //store the next token in case we need to backtrack later
-                    var temp = tokens.Peek();
-                    ArithmeticExpression aexp = ArithmeticParser();
+                // Pop open bracket
+                tokens.Pop();
 
-                    var tok2 = tokens.Pop();
-                    if (tok2.Item1 == TokenType.RPAREN)
-                        return aexp;
-                    else
-                    {
-                        // not a valid brackets arithmetic expression, push the token back on the stack
-                        tokens.Push(tok2);
-                        tokens.Push(temp);
-                        break;
-                    }
-                }
+                // Get the arithmetic Expression
+                var aexp = ArithmeticParser();
 
-                // Option 2 -- Number
-                case TokenType.NUMBER:
-                    return new Number(Int32.Parse(firstToken.Item2));
+                // Pop close bracket
+                tokens.Pop();
 
-                // Option 3 -- Identifier
-                case TokenType.IDENTIFIER:
-                    return new Var(firstToken.Item2);
+                // Return the Arithmetic Expression
+                return aexp;
             }
-            
-            // If we get here it means we found no matches, push the token back on the stack
-            tokens.Push(firstToken);
-            throw new NoMatchException();
+            else
+            {
+                // No match found, try another parser
+                throw new NoMatchException();
+            }
         }
 
-        // x*2/4+1
-        public ArithmeticExpression ArithmeticParser()
+        private ArithmeticExpression Number()
         {
-            ArithmeticExpression x = Fa();
-
-            // Are there any more tokens to parse?
-            if (tokens.Count() > 0)
+            if (tokens.Peek().Item1 == TokenType.NUMBER)
             {
-                var token = tokens.Peek();
+                return new Number(Int32.Parse(tokens.Pop().Item2));
+            }
+            else
+            {
+                throw new NoMatchException();
+            }
+        }
 
+        private ArithmeticExpression Identifier()
+        {
+            if (tokens.Peek().Item1 == TokenType.IDENTIFIER)
+            {
+                return new Var(tokens.Pop().Item2);
+            }
+            else
+            {
+                throw new NoMatchException();
+            }
+        }
+
+
+
+        private ArithmeticExpression Fa()
+        {
+            ArithmeticExpression aexp;
+            try
+            {
+                aexp = ArithInBrackets();
+            }
+            catch (NoMatchException)
+            {
                 try
                 {
-                    // Check if the next tokens represent an arithmetic operation
-
-                    if (token.Item1 == TokenType.ARITH_OP)
-                    {
-                        var op = DefineArithmeticOperator(token);
-                        
-                        // need to call pop here because we have confirmed that it is a arithmetic operation
-                        tokens.Pop();
-                        
-                        ArithmeticExpression y = ArithmeticParser();
-                        return new ArithmeticOperation(op, x, y);
-                    }
-                    else
-                    {
-                        return x;
-                    }
+                    aexp = Number();
                 }
                 catch (NoMatchException)
                 {
-                    // The next token is not an operator, meaning the arithmetic expression
-                    // is just something that was matched in Fa()
-                    // Push the token back on the stack and return x
-                    return x;
+                    try
+                    {
+                        aexp = Identifier();
+                    }
+                    catch (NoMatchException)
+                    {
+                        throw;
+                    }
+                }
+            }
+            return aexp;
+        }
+
+        private ArithmeticExpression Te()
+        {
+            var x = Fa();
+            try
+            {
+                // Check if there's an arithmetic operator
+                var op = DefineTeArithmeticOperator(tokens.Peek());
+
+                // Pop the arithmetic operator now that we know there is one
+                tokens.Pop();
+
+                var y = Te();
+                return new ArithmeticOperation(op, x, y);
+            }
+            catch (NoMatchException)
+            {
+                return x;
+            }
+        }
+
+        private ArithmeticExpression ArithmeticParser()
+        {
+            var x = Te();
+            try
+            {
+                var op = DefineAEArithmeticOperator(tokens.Peek());
+                tokens.Pop();
+                var y = ArithmeticParser();
+
+                return new ArithmeticOperation(op, x, y);
+            }
+            catch (NoMatchException)
+            {
+                return x;
+            }
+        }
+
+        // ================
+        // Boolean Parsers
+        // ================
+
+        // For simple boolean expressions such as "x < y"
+        private BooleanExpression SimpleBool()
+        {
+            ArithmeticExpression x;
+            try
+            {
+                x = ArithmeticParser();
+            }
+            catch (NoMatchException)
+            {
+                // No match in this parser
+                throw;
+            }
+            var op = DefineBooleanOperator(tokens.Peek());
+
+            // Pop the Boolean Operator now that we know it's a match
+            tokens.Pop();
+
+            var y = ArithmeticParser();
+
+            return new BooleanOperation(op, x, y);
+        }
+
+        // For boolean expressions in brackets or Compound Boolean Expressions joined with AND or OR. Eg (x < y) && (z == 4)
+        private BooleanExpression BoolBrackets()
+        {
+            if (tokens.Peek().Item1 == TokenType.LPAREN)
+            {
+                /*
+                 * there is a possibility that the brackets we have entered are part of an
+                 * arithmetic expression, and not part of a boolean expression
+                 */
+
+
+
+
+                // Pop the open bracket
+                tokens.Pop();
+
+                // Get the boolean expression
+                var bexp = BooleanParser();
+
+                // Pop the close bracket
+                tokens.Pop();
+
+                // Check if there is a compound operator next
+                if (tokens.Peek().Item1 == TokenType.COMP_BOOL_OP)
+                {
+                    var op = tokens.Pop().Item2;
+                    var bexp2 = BooleanParser();
+
+                    // Return either an AND or an OR depending on the operation
+                    if (op == "&&")
+                        return new And(bexp, bexp2);
+                    else if (op == "||")
+                        return new Or(bexp, bexp2);
+                    else
+                        throw new Exception(); // Fail the parse if we get here
+                }
+                else
+                {
+                    return bexp;
                 }
             }
             else
             {
-                return x;
+                throw new NoMatchException();
             }
-
         }
 
-        public BooleanExpression BooleanParser()
+        // For boolean operations that are literally True or False
+        private BooleanExpression TrueOrFalse()
         {
-            // Check if the next sequence of tokens is an Arithmetic Expression
+            if (tokens.Peek().Item2 == "true")
+            {
+                tokens.Pop();
+                return new True();
+            }
+            else if (tokens.Peek().Item2 == "false")
+            {
+                tokens.Pop();
+                return new False();
+            }
+            else
+            {
+                // No match here
+                throw new NoMatchException();
+            }
+        }
+
+        private BooleanExpression BooleanParser()
+        {
+            BooleanExpression bexp;
             try
             {
-                var temp = tokens.Peek();
-                var x = ArithmeticParser();
-
-
-                var firstToken = tokens.Peek();
-                if (firstToken.Item1 == TokenType.OPERATOR)
-                {
-                    tokens.Pop();
-                    // check what the boolean operation is
-                    var op = DefineBooleanOperator(firstToken);
-
-                    var y = ArithmeticParser();
-                    return new BooleanOperation(op, x, y);
-                }
-                else
-                {
-                    // push everything back on the stack and throw nomatcherror
-                    tokens.Push(temp);
-
-                    throw new NoMatchException($"Encountered unexpected {firstToken.Item1}\nExpected {TokenType.OPERATOR}");
-                }
+                bexp = BoolBrackets();
             }
-
             catch (NoMatchException)
             {
-                // It could still be a boolean expression in brackets
-                // or an && or || expression
-                // or simply a True or False
-
-                var tok2 = tokens.Pop();
-                if(tok2.Item1 == TokenType.KEYWORD)
+                try
                 {
-                    if (tok2.Item2 == "true")
-                    {
-                        return new True();
-                    }
-                    else if (tok2.Item2 == "false")
-                    {
-                        return new False();
-                    }
-                    else
-                    {
-                        tokens.Push(tok2);
-                        throw new NoMatchException();
-                    }
+                    
+                    bexp = SimpleBool();
                 }
-                // if no match then throw error and push everything back on stack
-                else
+                catch (NoMatchException)
                 {
-                    tokens.Push(tok2);
-                    throw new NoMatchException();
+                    try
+                    {
+                        bexp = TrueOrFalse();
+                    }
+                    catch (NoMatchException)
+                    {
+                        // The expression we got was not a boolean expression
+                        // but we expected one if this parser was called
+                        // meaning the whole parsing should fail
+                        throw new Exception();
+                    }
                 }
             }
+            return bexp;
         }
+
+
+
+
+
+
 
         private Statement Skip()
         {
@@ -292,18 +411,25 @@ namespace Parser
 
         private Statement If()
         {
-            try
+            if (tokens.Peek().Item2 == "if")
             {
-                var t = tokens.Pop();
-                if (t.Item2 == "if")
+                tokens.Pop();
+
+                // The if statement appears to always have brackets in it, pop those off
+                if (tokens.Peek().Item1 == TokenType.LPAREN)
+                    tokens.Pop();
+
+                var bexp = BooleanParser();
+
+                if (tokens.Peek().Item1 == TokenType.RPAREN)
+                    tokens.Pop();
+
+                try
                 {
-                    var bexp = BooleanParser();
-                    var t2 = tokens.Pop();
-                    if (t2.Item2 == "then")
+                    if (tokens.Pop().Item2 == "then")
                     {
                         var b = BlockParser();
-                        var t3 = tokens.Pop();
-                        if (t3.Item2 == "else")
+                        if (tokens.Pop().Item2 == "else")
                         {
                             var b2 = BlockParser();
                             return new If(bexp, b, b2);
@@ -318,36 +444,27 @@ namespace Parser
                         throw new Exception();
                     }
                 }
-                else
+                catch (Exception)
                 {
-                    /* We push the token back here and not in the above parsers because
-                     * if we fail to parse on the first keyword, then we are in the wrong parser
-                     * and need to allow for it to be passed on to the next parser.
-                     * 
-                     * If we fail after confirming we are in an If statement, that must mean
-                     *  that the If statement was malformed, which should lead to a parsing failure
-                     */
-                    tokens.Push(t);
-                    throw new NoMatchException($"Encountered unexpected {t.Item2}\nExpected \"if\"");
+                    throw new Exception("Malformed If Statement. Parse Failed");
                 }
             }
-            catch (Exception)
+            else
             {
-                throw new Exception("Malformed If Statement. Parse Failed");
+                throw new NoMatchException();
             }
         }
 
         private Statement While()
         {
-            try
+            if (tokens.Peek().Item2 == "while")
             {
-                var t = tokens.Pop();
-                if (t.Item2 == "while")
+                tokens.Pop();
+                try
                 {
                     var b = BooleanParser();
 
-                    var t2 = tokens.Pop();
-                    if (t2.Item2 == "do")
+                    if (tokens.Pop().Item2 == "do")
                     {
                         var bl = BlockParser();
                         return new While(b, bl);
@@ -357,16 +474,16 @@ namespace Parser
                         throw new Exception();
                     }
                 }
-                else
+                catch (Exception)
                 {
-                    tokens.Push(t);
-                    throw new NoMatchException($"Encountered unexpected {t.Item2}\nExpected \"while\"");
+                    throw new Exception("Malformed While Statement. Parse Failed");
                 }
             }
-            catch (Exception)
+            else
             {
-                throw new Exception("Malformed While Statement. Parse Failed");
+                throw new NoMatchException();
             }
+
         }
 
         private Statement StatementParser()
@@ -442,7 +559,27 @@ namespace Parser
 
         private Block BlockParser()
         {
-            return new Block(new List<Statement>() { });
+            try
+            {
+                if (tokens.Peek().Item2 == "{")
+                {
+                    tokens.Pop();
+                    Block stmts = StatementsParser();
+
+                    // pop the closing bracket
+                    tokens.Pop();
+
+                    return stmts;
+                }
+                else
+                {
+                    throw new NoMatchException();
+                }
+            }
+            catch (NoMatchException)
+            {
+                return StatementsParser();
+            }
         }
     }
 }
