@@ -429,15 +429,15 @@ namespace Parser
                 if (t.Item1 == TokenType.SEMICOLON)
                 {
                     var ss = StatementsParser();
-                    return new Block(new List<Statement>() { s }.Concat(ss.statements).ToList());
+                    return new Block(s.ToList().Concat(ss.statements).ToList());
                 }
                 else
                 {
                     tokens.Push(t);
-                    return new Block(new List<Statement>() { s });
+                    return new Block(s.ToList());
                 }
             }
-            return new Block(new List<Statement>() { s });
+            return new Block(s.ToList()); ;
         }
 
         private Block BlockParser()

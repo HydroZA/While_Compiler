@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace Parser
 {
-    public abstract class Statement { }
+    public abstract class Statement 
+    {
+        public List<Statement> ToList()
+        {
+            return new List<Statement>() { this };
+        }
+    }
 
 
     public class Block
