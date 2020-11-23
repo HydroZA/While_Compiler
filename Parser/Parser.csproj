@@ -12,6 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -71,9 +72,10 @@
     <Compile Include="AbstractSyntaxTrees\ArithmeticExpression.cs" />
     <Compile Include="AbstractSyntaxTrees\BooleanExpression.cs" />
     <Compile Include="AbstractSyntaxTrees\Statements.cs" />
+    <Compile Include="NoMatchException.cs" />
     <Compile Include="WhileParser.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WhileTokenParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

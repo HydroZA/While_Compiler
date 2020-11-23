@@ -1,7 +1,8 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Pidgin;
 using static Pidgin.Parser;
@@ -9,18 +10,20 @@ using lex;
 
 namespace Parser
 {
-    class WhileParser
+    public class WhileParser
     {
         public WhileParser()
         {
 
         }
 
-        // For parsing strings directly
-        public Block Parse (string s)
+        // For parsing strings directly without the Lexer
+        public Block Parse(string s)
         {
+            s = Regex.Replace(s, @" |\r|\t|\n", "");
             try
             {
+                //Console.WriteLine(s);
                 return BlockParser.ParseOrThrow(s);
             }
             catch (ParseException)
@@ -31,24 +34,38 @@ namespace Parser
         }
 
         // For accepting the output of the Lexer
-        public Block Parse (List<(TokenType, string)> tokens)
+        public Block Parse(List<(TokenType, string)> tokens)
         {
-
+            try
+            {
+                string inp = string.Join("", tokens.Select(x => x.Item2).ToList());
+                Console.WriteLine(inp);
+                return BlockParser.ParseOrThrow(inp);
+            }
+            catch (ParseException)
+            {
+                Console.WriteLine("Unable to Parse");
+                throw;
+            }
         }
+
 
         // Identifier Parser
         static readonly Pidgin.Parser<char, string> IdentifierParser =
-            from id in OneOf(LetterOrDigit, Char('_')).ManyString()
-            select id;
+            from x in OneOf(LetterOrDigit, Char('_'), Symbol).ManyString()
+            select x;
+
 
         // String parser
         static readonly Pidgin.Parser<char, string> StringParser =
-            from x in String("\"")
-            from str in OneOf(LetterOrDigit, Symbol, Whitespace).ManyString()
-            from y in String("\"")
-            select str;
+            Try (
+                from x in String("\"")
+                from str in OneOf(LetterOrDigit, Symbol, Whitespace).ManyString()
+                from y in String("\"")
+                select str
+            );
 
-
+        // (9/3)+4
         // Arithmetic Parser
         static readonly Pidgin.Parser<char, ArithmeticExpression> Fa =
             OneOf(
@@ -64,7 +81,7 @@ namespace Parser
                 Try(Num.Select(x => (ArithmeticExpression)new Number(x))),
 
                 // Option 3 -- Identifier
-                IdentifierParser.Select(x => (ArithmeticExpression)new Var(x))
+                Try(IdentifierParser.Select(x => (ArithmeticExpression)new Var(x)))
             );
         
         static readonly Pidgin.Parser<char, ArithmeticExpression> Te =
@@ -120,6 +137,7 @@ namespace Parser
             );
 
 
+        // (x==2)
         // boolean expression parser
         static Pidgin.Parser<char, BooleanExpression> BooleanParser =
             OneOf(
@@ -172,7 +190,7 @@ namespace Parser
                     ),
 
                 // Option 7 -- And
-                Try (
+                Try(
                     from a in Char('(')
                     from bexp1 in BooleanParser
                     from b in Char(')')
@@ -182,7 +200,7 @@ namespace Parser
                     ),
 
                 // Option 8 -- Or
-                Try (
+                Try(
                     from a in Char('(')
                     from bexp1 in BooleanParser
                     from b in Char(')')
@@ -224,17 +242,15 @@ namespace Parser
 
                 // Option 3 -- Write String
                 Try(
-                    from k in String("write(")
+                    from k in String("write")
                     from str in StringParser
-                    from p in Char(')')
                     select (Statement)new Write(str)
                     ),
 
                 // Option 4 -- Write Var
                 Try (
-                    from k in String("write(")
+                    from k in String("write")
                     from id in IdentifierParser
-                    from p in Char(')')
                     select (Statement) new Write(id)
                     ),
 
@@ -247,9 +263,9 @@ namespace Parser
 
                 // Option 5 -- If
                 Try (
-                    from k in String("if(")
+                    from k in String("if")
                     from bexp1 in BooleanParser
-                    from k2 in String(")then")
+                    from k2 in String("then")
                     from b in BlockParser
                     from k3 in String("else")
                     from b2 in BlockParser
@@ -275,7 +291,7 @@ namespace Parser
                 select new Block(new List<Statement>() { s }.Concat(ss.statements).ToList())
                 )
 
-            // Option 2 -- to List
+            // Option 2 -- single statement
             .Or(
                 Try(StatementParser).Select(x => new Block(new List<Statement>() { x }))
             );
@@ -284,13 +300,13 @@ namespace Parser
         // block parser (enclosed in curly parenthesis)
         static readonly Pidgin.Parser<char, Block> BlockParser =
             Try(
-                from b in Char('{')
+                from b in String("{")
                 from s in StatementsParser
-                from c in Char('}')
+                from c in String("}")
                 select s
                 )
             .Or(
-                Try(StatementParser).Select(x => new Block(new List<Statement>() { x }))
+                Try(StatementsParser)
                 );
     }
 }

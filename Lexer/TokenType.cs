@@ -10,6 +10,7 @@ namespace lex
     {
         KEYWORD,
         IDENTIFIER,
+        ARITH_OP,
         OPERATOR,
         NUMBER,
         SEMICOLON,

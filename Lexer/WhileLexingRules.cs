@@ -8,12 +8,14 @@ namespace lex
 {
     public static class WhileLexingRules
     {
-        // Lexing Rules for WHILE Language
+        // Lexing Rules for WHILE Language 
         private static readonly Rexp rDIGIT = new RANGE("0123456789".ToHashSet());
 
-        private static readonly Rexp rKEYWORD = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("skip", "while"), "do"), "if"), "then"), "else"), "read"), "write"), "for"), "to"), "true"), "false");
+        private static readonly Rexp rKEYWORD = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("skip", "while"), "do"), "if"), "then"), "else"), "read"), "write"), "for"), "to"), "true"), "false"), ":=");
 
-        private static readonly Rexp rOPERATOR = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(":=", "="), "-"), "+"), "*"), "!="), "<"), ">"), "<="), ">="), "||"), "&&"), "%"), "!"), "==");
+        private static readonly Rexp rOPERATOR = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("==", "!="), "<"), ">"), "<="), ">="), "||"), "&&"), "!");
+
+        private static readonly Rexp rARITH_OP = new ALT(new ALT(new ALT(new ALT("-", "+"), "*"), "/"), "%");
 
         private static readonly Rexp rLETTER = new RANGE("ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz".ToHashSet());
 
@@ -46,9 +48,11 @@ namespace lex
                                         new ALT(
                                             new ALT(
                                                 new ALT(
-                                                    new RECD(TokenType.KEYWORD, rKEYWORD),
-                                                new RECD(TokenType.IDENTIFIER, rIDENTIFIER)),
-                                            new RECD(TokenType.OPERATOR, rOPERATOR)),
+                                                    new ALT(
+                                                        new RECD(TokenType.KEYWORD, rKEYWORD),
+                                                    new RECD(TokenType.IDENTIFIER, rIDENTIFIER)),
+                                                new RECD(TokenType.OPERATOR, rOPERATOR)),
+                                            new RECD(TokenType.ARITH_OP, rARITH_OP)),
                                         new RECD(TokenType.NUMBER, rNUMBER)),
                                     new RECD(TokenType.SEMICOLON, rSEMICOLON)),
                                 new RECD(TokenType.STRING, rSTRING)),

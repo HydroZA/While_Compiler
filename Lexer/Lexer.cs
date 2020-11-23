@@ -7,9 +7,12 @@ namespace lex
 {
     public class Lexer
     {
-        public Lexer()
+        private readonly Rexp rules;
+        public Lexer(Rexp rules)
         {
+            this.rules = rules;
         }
+
         public bool Nullable(Rexp r) => r switch
         {
             ZERO _ => false,
@@ -261,7 +264,7 @@ namespace lex
 
         private string[] SplitLines(string s) => s.Split(System.Environment.NewLine.ToCharArray());
 
-        public List<(TokenType, string)> Lex(Rexp r, string s)
+        public List<(TokenType, string)> Lex(string s)
         {
             /*  Here I split the input into individual lines and lex them one by one.
             *   I found this to significantly improve the lexing time over lexing the entire program in one go
@@ -277,7 +280,7 @@ namespace lex
                 output = output.Concat(
                     RemoveWhitespace(
                         Environment(
-                            GetValues(r, lineNoCommments))))
+                            GetValues(rules, lineNoCommments))))
                     .ToList();
             }
             return output;
