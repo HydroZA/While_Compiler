@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace lex
+namespace Lexer
 {
     public enum TokenType
     {
         KEYWORD,
         IDENTIFIER,
         ARITH_OP,
+        COMP_BOOL_OP,
         OPERATOR,
         NUMBER,
         SEMICOLON,

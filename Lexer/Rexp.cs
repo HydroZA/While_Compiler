@@ -4,7 +4,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
-namespace lex
+namespace Lexer
 {
 
     public abstract class Rexp 

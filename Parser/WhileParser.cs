@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Pidgin;
 using static Pidgin.Parser;
-using lex;
+using Lexer;
 
 namespace Parser
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace lex
+namespace Lexer
 {
     public abstract class Val { }
     public sealed class Empty : Val 
