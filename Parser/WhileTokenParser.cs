@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Pidgin;
-using static Pidgin.Parser;
 using lex;
-using static Pidgin.ParserExtensions;
+
 namespace Parser
 {
     public class WhileTokenParser
@@ -19,11 +17,11 @@ namespace Parser
         }
 
         // temp booleanExpression to test
-        public ArithmeticExpression Parse(List<(TokenType, string)> t)
+        public Block Parse(List<(TokenType, string)> t)
         {
             t.Reverse();
             this.tokens = new Stack<(TokenType, string)>(t);
-            return ArithmeticParser();
+            return StatementsParser();
 
         }
 
@@ -186,55 +184,8 @@ namespace Parser
                 // or an && or || expression
                 // or simply a True or False
 
-                
                 var tok2 = tokens.Pop();
-
-                // Option 2 -- And, Or
-                if (tok2.Item1 == TokenType.LPAREN)
-                {
-                    var tok3 = tokens.Peek();
-                    BooleanExpression bexp1 = BooleanParser();
-
-                    var tok4 = tokens.Pop();
-                    
-                    if (tok4.Item1 == TokenType.RPAREN)
-                    {
-                        // Any more tokens?
-                        if (tokens.Count() > 0)
-                        {
-                            var tok5 = tokens.Pop();
-                            
-                            if (tok5.Item2 == "&&")
-                            {
-                                var bexp2 = BooleanParser();
-                                return new And(bexp1, bexp2);
-                            }
-                            else if (tok5.Item2 == "||")
-                            {
-                                var bexp2 = BooleanParser();
-                                return new Or(bexp1, bexp2);
-                            }
-                            else
-                            {
-                                tokens.Push(tok5);
-                                return bexp1;
-                            }
-                        }
-                        else
-                        {
-                            return bexp1;
-                        }
-
-                    }
-                    else
-                    {
-                        tokens.Push(tok4);
-                        tokens.Push(tok3);
-                        tokens.Push(tok2);
-                        throw new NoMatchException();
-                    }
-                }
-                else if(tok2.Item1 == TokenType.KEYWORD)
+                if(tok2.Item1 == TokenType.KEYWORD)
                 {
                     if (tok2.Item2 == "true")
                     {
@@ -259,20 +210,239 @@ namespace Parser
             }
         }
 
-        private string Keyword (string wantedKeyword)
+        private Statement Skip()
         {
-            var token = tokens.Pop();
-            if (token.Item1 == TokenType.KEYWORD)
+            var t = tokens.Pop();
+            if (t.Item2 == "skip")
+                return new Skip();
+            else
             {
-                if (token.Item2 == wantedKeyword)
+                tokens.Push(t);
+                throw new NoMatchException($"Encountered unexpected {t.Item2}\nExpected \"skip\"");
+            }
+        }
+
+        private Statement Assign()
+        {
+            var t = tokens.Pop();
+            if (t.Item1 == TokenType.IDENTIFIER)
+            {
+                // Store the variable name
+                var iden = t.Item2;
+
+                var t2 = tokens.Pop();
+                if (t2.Item2 == ":=")
                 {
-                    return token.Item2;
+                    // Get the arithmetic expression to assign to the var
+                    ArithmeticExpression aexp = ArithmeticParser();
+                    
+                    // return
+                    return new Assign(iden, aexp);
+                }
+                else
+                {
+                    // Push the token back on the stack
+                    // so it can be passed on to other parsers
+                    tokens.Push(t2);
                 }
             }
+            tokens.Push(t);
+            throw new NoMatchException($"Encountered unexpected {t.Item2}\nExpected Identifier");
+        }
 
-            // not a match -- Put it back on the stack
-            tokens.Push(token);
-            throw new Exception("Unexpected Token");
+        private Statement Write()
+        {
+            var t = tokens.Pop();
+            if (t.Item2 == "write")
+            {
+                // write can either be performed on a string or on a variable
+                var t2 = tokens.Pop();
+                if (t2.Item1 == TokenType.STRING || t2.Item1 == TokenType.IDENTIFIER)
+                {
+                    return new Write(t2.Item2);
+                }
+                else
+                {
+                    // Push back on the stack
+                    tokens.Push(t2);
+                }
+            }
+            tokens.Push(t);
+            throw new NoMatchException($"Encountered unexpected {t.Item2}\nExpected \"write\"");
+        }
+
+        private Statement Read()
+        {
+            var t = tokens.Pop();
+            if (t.Item2 == "read")
+            {
+                var t2 = tokens.Pop();
+                if (t2.Item1 == TokenType.IDENTIFIER)
+                {
+                    return new Read(t2.Item2);
+                }
+                else
+                {
+                    tokens.Push(t2);
+                }
+            }
+            tokens.Push(t);
+            throw new NoMatchException($"Encountered unexpected {t.Item2}\nExpected \"read\"");
+        }
+
+        private Statement If()
+        {
+            try
+            {
+                var t = tokens.Pop();
+                if (t.Item2 == "if")
+                {
+                    var bexp = BooleanParser();
+                    var t2 = tokens.Pop();
+                    if (t2.Item2 == "then")
+                    {
+                        var b = BlockParser();
+                        var t3 = tokens.Pop();
+                        if (t3.Item2 == "else")
+                        {
+                            var b2 = BlockParser();
+                            return new If(bexp, b, b2);
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
+                else
+                {
+                    /* We push the token back here and not in the above parsers because
+                     * if we fail to parse on the first keyword, then we are in the wrong parser
+                     * and need to allow for it to be passed on to the next parser.
+                     * 
+                     * If we fail after confirming we are in an If statement, that must mean
+                     *  that the If statement was malformed, which should lead to a parsing failure
+                     */
+                    tokens.Push(t);
+                    throw new NoMatchException($"Encountered unexpected {t.Item2}\nExpected \"if\"");
+                }
+            }
+            catch (Exception)
+            {
+                throw new Exception("Malformed If Statement. Parse Failed");
+            }
+        }
+
+        private Statement While()
+        {
+            try
+            {
+                var t = tokens.Pop();
+                if (t.Item2 == "while")
+                {
+                    var b = BooleanParser();
+
+                    var t2 = tokens.Pop();
+                    if (t2.Item2 == "do")
+                    {
+                        var bl = BlockParser();
+                        return new While(b, bl);
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
+                else
+                {
+                    tokens.Push(t);
+                    throw new NoMatchException($"Encountered unexpected {t.Item2}\nExpected \"while\"");
+                }
+            }
+            catch (Exception)
+            {
+                throw new Exception("Malformed While Statement. Parse Failed");
+            }
+        }
+
+        private Statement StatementParser()
+        {
+            Statement stmt;
+            try
+            {
+                stmt = Skip();
+            }
+            catch (NoMatchException)
+            {
+                try
+                {
+                    stmt = Assign();
+                }
+                catch (NoMatchException)
+                {
+                    try
+                    {
+                        stmt = Write();
+                    }
+                    catch (NoMatchException)
+                    {
+                        try
+                        {
+                            stmt = Read();
+                        }
+                        catch (NoMatchException)
+                        {
+                            try
+                            {
+                                stmt = If();
+                            }
+                            catch(NoMatchException)
+                            {
+                                try
+                                {
+                                    stmt = While();
+                                }
+                                catch (NoMatchException)
+                                {
+                                    throw new Exception("Failed to match statement. Parse Failed");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return stmt;
+        }
+
+        private Block StatementsParser()
+        {
+            var s = StatementParser();
+            
+            // More tokens?
+            if (tokens.Count() > 0)
+            {
+                var t = tokens.Pop();
+                if (t.Item1 == TokenType.SEMICOLON)
+                {
+                    var ss = StatementsParser();
+                    return new Block(new List<Statement>() { s }.Concat(ss.statements).ToList());
+                }
+                else
+                {
+                    tokens.Push(t);
+                    return new Block(new List<Statement>() { s });
+                }
+            }
+            return new Block(new List<Statement>() { s });
+        }
+
+        private Block BlockParser()
+        {
+            return new Block(new List<Statement>() { });
         }
     }
 }
