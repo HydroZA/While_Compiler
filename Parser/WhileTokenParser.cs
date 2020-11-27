@@ -13,10 +13,9 @@ namespace Parser
 
         public WhileTokenParser()
         {
-            
+
         }
 
-        // temp booleanExpression to test
         public Block Parse(List<(TokenType, string)> t)
         {
             t.Reverse();
@@ -24,13 +23,6 @@ namespace Parser
             return BlockParser();
 
         }
-
-        /*
-         * Pattern:
-         * 1. Peek
-         * 2. Check
-         * 3. Match? Pop else return NoMatchException
-         */
 
         private ArithOperationType DefineAEArithmeticOperator((TokenType, string) token)
         {
@@ -323,11 +315,9 @@ namespace Parser
             return bexp;
         }
 
-
-
-
-
-
+        // ================
+        // Statement Parsers
+        // ================
 
         private Statement Skip()
         {
@@ -343,15 +333,17 @@ namespace Parser
 
         private Statement Assign()
         {
-            var t = tokens.Pop();
-            if (t.Item1 == TokenType.IDENTIFIER)
+            if (tokens.Peek().Item1 == TokenType.IDENTIFIER)
             {
-                // Store the variable name
-                var iden = t.Item2;
 
-                var t2 = tokens.Pop();
-                if (t2.Item2 == ":=")
+
+                // Store the variable name
+                var iden = tokens.Pop().Item2;
+
+                if (tokens.Peek().Item2 == ":=")
                 {
+                    tokens.Pop();
+
                     // Get the arithmetic expression to assign to the var
                     ArithmeticExpression aexp = ArithmeticParser();
                     
@@ -360,13 +352,10 @@ namespace Parser
                 }
                 else
                 {
-                    // Push the token back on the stack
-                    // so it can be passed on to other parsers
-                    tokens.Push(t2);
+                    throw new NoMatchException($"Encountered unexpected token\nExpected Identifier");
                 }
             }
-            tokens.Push(t);
-            throw new NoMatchException($"Encountered unexpected {t.Item2}\nExpected Identifier");
+            throw new NoMatchException($"Encountered unexpected token\nExpected Identifier");
         }
 
         private Statement Write()
@@ -486,6 +475,44 @@ namespace Parser
 
         }
 
+        private Statement For()
+        {
+            if (tokens.Peek().Item2 == "for")
+            {
+                tokens.Pop();
+
+                Assign ass = (Assign) Assign();
+
+                if (tokens.Peek().Item2 == "upto")
+                {
+                    tokens.Pop();
+
+                    var upto = ArithmeticParser();
+
+                    if (tokens.Peek().Item2 == "do")
+                    {
+                        tokens.Pop();
+
+                        Block bl = BlockParser();
+
+                        return new For(ass, upto, bl);
+                    }
+                    else
+                    {
+                        throw new NoMatchException();
+                    }
+                }
+                else
+                {
+                    throw new NoMatchException();
+                }
+            }
+            else
+            {
+                throw new NoMatchException();
+            }
+        }
+
         private Statement StatementParser()
         {
             Statement stmt;
@@ -525,7 +552,14 @@ namespace Parser
                                 }
                                 catch (NoMatchException)
                                 {
-                                    throw new Exception("Failed to match statement. Parse Failed");
+                                    try
+                                    {
+                                        stmt = For();
+                                    }
+                                    catch (NoMatchException)
+                                    {
+                                        throw new Exception("Failed to match statement. Parse Failed");
+                                    }
                                 }
                             }
                         }

@@ -87,6 +87,16 @@ namespace Interpreter
                         }
                         break;
                     }
+                case For f:
+                    {
+                        EvaluateStatement(f.var);
+                        for (int i = Environment.GetValueOrDefault(f.var.s); i <= EvaluateArithmeticExpression(f.upto); i++)
+                        {
+                            EvaluateBlock(f.bl);
+                            Environment.AddOrUpdate(f.var.s, Environment.GetValueOrDefault(f.var.s) + 1);
+                        }
+                        break;
+                    }
             };
         }
 

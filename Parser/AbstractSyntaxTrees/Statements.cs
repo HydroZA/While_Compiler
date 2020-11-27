@@ -39,6 +39,20 @@ namespace Parser
         }
     }
 
+    public class For : Statement
+    {
+        public Assign var;
+        public ArithmeticExpression upto;
+        public Block bl;
+
+        public For(Assign var, ArithmeticExpression upto, Block bl)
+        {
+            this.var = var;
+            this.upto = upto;
+            this.bl = bl;
+        }
+    }
+
     public class While : Statement
     {
         public BooleanExpression b;

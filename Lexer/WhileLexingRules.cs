@@ -11,7 +11,7 @@ namespace Lexer
         // Lexing Rules for WHILE Language 
         private static readonly Rexp rDIGIT = new RANGE("0123456789".ToHashSet());
 
-        private static readonly Rexp rKEYWORD = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("skip", "while"), "do"), "if"), "then"), "else"), "read"), "write"), "for"), "to"), "true"), "false"), ":=");
+        private static readonly Rexp rKEYWORD = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("skip", "while"), "do"), "if"), "then"), "else"), "read"), "write"), "for"), "to"), "true"), "false"), ":="), "upto");
 
         private static readonly Rexp rOPERATOR = new ALT(new ALT(new ALT(new ALT(new ALT(new ALT("==", "!="), "<"), ">"), "<="), ">="), "!");
 

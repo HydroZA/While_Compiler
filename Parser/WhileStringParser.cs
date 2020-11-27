@@ -10,9 +10,9 @@ using Lexer;
 
 namespace Parser
 {
-    public class WhileParser
+    public class WhileStringParser
     {
-        public WhileParser()
+        public WhileStringParser()
         {
 
         }
