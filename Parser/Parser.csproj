@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <ConsolePause>true</ConsolePause>
+    <AssemblyName></AssemblyName>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="AbstractSyntaxTrees\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lexer\Lexer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Pidgin" Version="2.5.0" />
+  </ItemGroup>
+</Project>

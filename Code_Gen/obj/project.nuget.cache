@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "bH3OCIxOZbX0ZNACVwv6eUwb7dQT6yIWUey9CAtc+w0+WEwptvHLBEp5XBcZr2MA/Q+AVQ7ad/DAwiwHE0d2nw==",
+  "success": true,
+  "projectFilePath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Code_Gen/Code_Gen.csproj",
+  "expectedPackageFiles": [
+    "/Users/james/.nuget/packages/pidgin/2.5.0/pidgin.2.5.0.nupkg.sha512",
+    "/Users/james/.nuget/packages/system.buffers/4.4.0/system.buffers.4.4.0.nupkg.sha512",
+    "/Users/james/.nuget/packages/system.collections.immutable/1.4.0/system.collections.immutable.1.4.0.nupkg.sha512",
+    "/Users/james/.nuget/packages/system.memory/4.5.1/system.memory.4.5.1.nupkg.sha512",
+    "/Users/james/.nuget/packages/system.valuetuple/4.4.0/system.valuetuple.4.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,32 @@
+﻿<Properties StartupConfiguration="{5B67417B-2CC8-4BAB-BAC6-1B2C419CAA42}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Code_Gen/CodeGenerator.cs">
+    <Files>
+      <File FileName="While_Compiler/Program.cs" Line="27" Column="10" />
+      <File FileName="Interpreter/Interpreter.cs" Line="22" Column="10" />
+      <File FileName="Parser/WhileStringParser.cs" Line="16" Column="10" />
+      <File FileName="Code_Gen/CodeGenerator.cs" Line="4" Column="7" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="While_Compiler" expanded="True">
+            <Node name="Code_Gen" expanded="True">
+              <Node name="Dependencies" selected="True" />
+            </Node>
+            <Node name="Interpreter" expanded="True" />
+            <Node name="Lexer" expanded="True" />
+            <Node name="Parser" expanded="True" />
+            <Node name="While_Compiler" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.While__Compiler FirstBuild="True" PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>
