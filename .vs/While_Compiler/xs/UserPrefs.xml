@@ -4,19 +4,17 @@
       <File FileName="While_Compiler/Program.cs" Line="27" Column="10" />
       <File FileName="Interpreter/Interpreter.cs" Line="22" Column="10" />
       <File FileName="Parser/WhileStringParser.cs" Line="16" Column="10" />
-      <File FileName="Code_Gen/CodeGenerator.cs" Line="4" Column="7" />
+      <File FileName="Code_Gen/CodeGenerator.cs" Line="12" Column="24" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="While_Compiler" expanded="True">
-            <Node name="Code_Gen" expanded="True">
-              <Node name="Dependencies" selected="True" />
-            </Node>
+            <Node name="Code_Gen" expanded="True" />
             <Node name="Interpreter" expanded="True" />
             <Node name="Lexer" expanded="True" />
             <Node name="Parser" expanded="True" />
-            <Node name="While_Compiler" expanded="True" />
+            <Node name="While_Compiler" expanded="True" selected="True" />
           </Node>
         </State>
       </Pad>
@@ -28,5 +26,5 @@
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.ItemProperties.While__Compiler FirstBuild="True" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.ItemProperties.While__Compiler PreferredExecutionTarget="MonoDevelop.Default" />
 </Properties>
