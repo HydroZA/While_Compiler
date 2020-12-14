@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Li52RP1biqTt5CnAo+l6zmbAAG+klQYACrYu5j1p+crgqwRrO9dyjZzG3z1JgMQoeIcihMNzbKI8Teuz72JFoQ==",
+  "dgSpecHash": "aujRalMOdEn+8XH8scc35cyXIi6U6sW1HsUKzfH7V7NNU45F2B+7ipv4MnQH5w/LsXqFp34SQlp7h1maJTdY6w==",
   "success": true,
-  "projectFilePath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Interpreter/Interpreter.csproj",
+  "projectFilePath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Interpreter/Interpreter.csproj",
   "expectedPackageFiles": [
     "/Users/james/.nuget/packages/pidgin/2.5.0/pidgin.2.5.0.nupkg.sha512",
     "/Users/james/.nuget/packages/system.buffers/4.4.0/system.buffers.4.4.0.nupkg.sha512",

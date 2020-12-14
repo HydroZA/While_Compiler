@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Parser/Parser.csproj": {}
+    "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Parser/Parser.csproj": {}
   },
   "projects": {
-    "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Lexer/Lexer.csproj": {
+    "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Lexer/Lexer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Lexer/Lexer.csproj",
+        "projectUniqueName": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Lexer/Lexer.csproj",
         "projectName": "Lexer",
-        "projectPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Lexer/Lexer.csproj",
+        "projectPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Lexer/Lexer.csproj",
         "packagesPath": "/Users/james/.nuget/packages/",
-        "outputPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Lexer/obj/",
+        "outputPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Lexer/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/james/.nuget/NuGet/NuGet.Config"
+          "/Users/james/.config/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net5.0"
@@ -56,17 +56,17 @@
         }
       }
     },
-    "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Parser/Parser.csproj": {
+    "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Parser/Parser.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Parser/Parser.csproj",
+        "projectUniqueName": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Parser/Parser.csproj",
         "projectName": "Parser",
-        "projectPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Parser/Parser.csproj",
+        "projectPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Parser/Parser.csproj",
         "packagesPath": "/Users/james/.nuget/packages/",
-        "outputPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Parser/obj/",
+        "outputPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Parser/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/james/.nuget/NuGet/NuGet.Config"
+          "/Users/james/.config/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net5.0"
@@ -78,8 +78,8 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Lexer/Lexer.csproj": {
-                "projectPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Lexer/Lexer.csproj"
+              "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Lexer/Lexer.csproj": {
+                "projectPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Lexer/Lexer.csproj"
               }
             }
           }

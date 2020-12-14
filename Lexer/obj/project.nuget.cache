@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "SbahmULUBy2pxwGMt8SykPBQqhr5lAbNbTLg3SyaxBNCCDukSZnQupxO8IMdZK9fW7U+Lya4DhospVH/o4+6Fg==",
+  "dgSpecHash": "DSTxjEgd5/0FDnSdHgVLsxHqOtxkizAD47+U6AvmP3krDZ55UJvNd7x8Wdxyk8ojIJe8h+2utE9fx6RX+1swxw==",
   "success": true,
-  "projectFilePath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Lexer/Lexer.csproj",
+  "projectFilePath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Lexer/Lexer.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

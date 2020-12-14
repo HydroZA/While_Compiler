@@ -2,9 +2,9 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="Code_Gen/CodeGenerator.cs">
     <Files>
       <File FileName="While_Compiler/Program.cs" Line="27" Column="10" />
-      <File FileName="Interpreter/Interpreter.cs" Line="22" Column="10" />
-      <File FileName="Parser/WhileStringParser.cs" Line="16" Column="10" />
-      <File FileName="Code_Gen/CodeGenerator.cs" Line="12" Column="24" />
+      <File FileName="Interpreter/Interpreter.cs" />
+      <File FileName="Parser/WhileStringParser.cs" />
+      <File FileName="Code_Gen/CodeGenerator.cs" Line="62" Column="12" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">

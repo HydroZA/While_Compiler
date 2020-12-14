@@ -237,14 +237,14 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Code_Gen/Code_Gen.csproj",
+      "projectUniqueName": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Code_Gen/Code_Gen.csproj",
       "projectName": "Code_Gen",
-      "projectPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Code_Gen/Code_Gen.csproj",
+      "projectPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Code_Gen/Code_Gen.csproj",
       "packagesPath": "/Users/james/.nuget/packages/",
-      "outputPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Code_Gen/obj/",
+      "outputPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Code_Gen/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/james/.nuget/NuGet/NuGet.Config"
+        "/Users/james/.config/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
@@ -256,8 +256,8 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Parser/Parser.csproj": {
-              "projectPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler5.0/While_Compiler/Parser/Parser.csproj"
+            "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Parser/Parser.csproj": {
+              "projectPath": "/Users/james/ownCloud/University/Masters/Compilers and Formal Language/While_Compiler/Parser/Parser.csproj"
             }
           }
         }
