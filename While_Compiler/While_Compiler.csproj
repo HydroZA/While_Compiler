@@ -5,10 +5,29 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType></DebugType>
+    <WarningLevel>4</WarningLevel>
+    <CustomCommands>
+      <CustomCommands>
+        <Command>
+          <type>AfterBuild</type>
+          <command>cp -r WhilePrograms/ bin/Release/net5.0</command>
+          <workingdir>${ProjectDir}</workingdir>
+        </Command>
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interpreter\Interpreter.csproj" />
     <ProjectReference Include="..\Lexer\Lexer.csproj" />
     <ProjectReference Include="..\Parser\Parser.csproj" />
     <ProjectReference Include="..\Code_Gen\Code_Gen.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="jasmin.jar">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

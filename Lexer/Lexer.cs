@@ -80,7 +80,7 @@ namespace Lexer
                 false => new ZERO()
             },
             ALL => Derive(c, new CFUN()),
-            _ => throw new System.Exception("GOT UNKNOWN REXP")
+            _ => throw new Exception("GOT UNKNOWN REXP")
         };
 
         /*        public Rexp ders(string s, Rexp r) 
@@ -251,6 +251,9 @@ namespace Lexer
                 if (Nullable(r))
                     return Mkeps(r);
                 else
+                {
+
+                }
                     throw new Exception("Unable to Lex");
             }
             else

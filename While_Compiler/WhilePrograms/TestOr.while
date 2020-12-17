@@ -1,0 +1,12 @@
+x := 5;
+y := 10;
+if (y == 10) || (x == 5) then
+{
+	write "hit the if"
+}
+else
+{
+	write "did not hit the if"
+}
+
+	

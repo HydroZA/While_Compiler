@@ -1,0 +1,9 @@
+write "Enter the number to get the factorial of:";
+read num;
+result := 1;
+for i := 2 upto num do
+{
+    result := result * i
+};
+write "Result:";
+write result

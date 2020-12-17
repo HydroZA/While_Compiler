@@ -39,7 +39,7 @@ Label1:
 	invokevirtual java/io/InputStream/read()I
 	istore 2
 	iload 2
-	ldc 13                  ; the newline delimiter for (Unix 10) (Windows 13)
+	ldc 10                  ; the newline delimiter for (Unix 10) (Windows 13)
 	isub
 	ifeq Label2
 	iload 2
@@ -107,8 +107,8 @@ Label2:
                 .Replace("XXX", className);
         }
 
-        private string I(string s) => "\t" + s + "\n";
-        private string L(string s) => s + ":\n";
+        private static string I(string s) => "\t" + s + "\n";
+        private static string L(string s) => s + ":\n";
 
         // Converts Arithmetic Operators to their Java Byte Code equivalent
         private string DefineArithOperator(ArithOperationType aop) => aop switch
@@ -151,7 +151,7 @@ Label2:
                                     CompileArithmeticExpression(bop.a2) +
                                     DefineBoolOperator(bop.type, invert) + jmp.l + "\n",
             And a => CompileBooleanExpression(a.b1, jmp) + CompileBooleanExpression(a.b2, jmp),
-            Or o => CompileBooleanExpression(o.b1, jmp, true) + CompileBooleanExpression(o.b2, jmp),
+            Or o => throw new NotImplementedException(),
             _ => throw new Exception("Got invalid Boolean Expression")
         };
 

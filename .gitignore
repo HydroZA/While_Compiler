@@ -355,3 +355,6 @@ MigrationBackup/
 UnitTests/
 *.jar
 
+While_Compiler/WhilePrograms/
+*.j
+*.while

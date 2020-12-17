@@ -574,17 +574,16 @@ namespace Parser
             var s = StatementParser();
             
             // More tokens?
-            if (tokens.Count() > 0)
+            if (tokens.Count > 0)
             {
-                var t = tokens.Pop();
-                if (t.Item1 == TokenType.SEMICOLON)
+                if (tokens.Peek().Item1 == TokenType.SEMICOLON)
                 {
+                    tokens.Pop();
                     var ss = StatementsParser();
                     return new Block(s.ToList().Concat(ss.statements).ToList());
                 }
                 else
                 {
-                    tokens.Push(t);
                     return new Block(s.ToList());
                 }
             }

@@ -16,7 +16,9 @@ Without arguments, WhileCompiler will compile the specified program and output J
 
 Optional Arguments:
     -i, -interpret      Parses the input file and runs an interpreter, does not output Jasmin Code
-    -o <path>           Specifies the path to output the Jasmin Code";
+Or:
+    -o <path>           Specifies the path to output the Jasmin Code
+    -a                  Runs the Jasmin Assembler on the generated Jasmin code. Outputs .class file.";
         
         private static readonly Lexer.Lexer lexer = new Lexer.Lexer(Lexer.WhileLexingRules.rules);
         private static readonly WhileTokenParser parser = new WhileTokenParser();
@@ -25,7 +27,7 @@ Optional Arguments:
 
         static void Main(string[] args)
         {
-            bool interpret = false;
+            bool interpret = false, assemble = false;
             string input = "", outpath = "", filename = "";
 
             if (args.Length == 0)
@@ -37,35 +39,60 @@ Optional Arguments:
             for (int i = 0; i < args.Length; i++)
             {
                 string arg = args[i];
-                if (arg == "-i" || arg == "-interpret")
+                switch(arg)
                 {
-                    interpret = true;
-                }
-                else if (arg == "-o")
-                {
-                    outpath = args[++i];
+                    case "-i":
+                    case "-interpret":
+                        {
+                            interpret = true;
+                            break;
+                        }
+                    case "-o":
+                        {
+                            outpath = args[++i];
 
-                    // -i and -o cant be used at the same time
-                    interpret = !interpret && interpret;
-                }
-                else
-                {
-                    try
-                    {
-                        input = File.ReadAllText(arg);
+                            // -o and -i can not be used together
+                            if (interpret)
+                            {
+                                Console.Error.WriteLine("-i and -o cannot be used together");
+                                Console.Error.WriteLine(helpMsg);
+                                Environment.Exit(1);
+                            }
+                            break;
+                        }
+                    case "-a":
+                        {
+                            assemble = true;
 
-                        // This regular expression extracts the filename and discards the rest of the path and the file extension
-                        filename = Regex.Match(arg, @"^.*[\\|\/](.+?)\.[^\.]+$").Groups[1].ToString();
-                    }
-                    catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
-                    {
-                        Console.WriteLine("Input file not found at: " + arg);
-                        Environment.Exit(1);
-                    }
+                            // -r and -i can not be used together
+                            if (interpret)
+                            {
+                                Console.Error.WriteLine("-i and -a cannot be used together");
+                                Console.Error.WriteLine(helpMsg);
+                                Environment.Exit(1);
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            try
+                            {
+                                input = File.ReadAllText(arg);
+
+                                // This regular expression extracts the filename and discards the rest of the path and the file extension
+                                filename = Regex.Match(arg, @"^.*[\\|\/](.+?)\.[^\.]+$").Groups[1].ToString();
+                            }
+                            catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
+                            {
+                                Console.Error.WriteLine("File Not Found: " + arg);
+                                Environment.Exit(1);
+                            }
+                            break;
+                        }
                 }
             }
 
-            // if no output path given, simply output the file to the working dir
+            // if no output path given, output the file to the working dir
             if (outpath == "")
                 outpath = ".";
 
@@ -96,9 +123,21 @@ Optional Arguments:
 
                 Console.WriteLine($"Compile Time: {sw.ElapsedMilliseconds}ms");
 
-                string outFile = outpath + "\\" + filename + ".j";
+                string outFile = outpath + "/" + filename + ".j";
                 File.WriteAllText(outFile, jasmin);
                 Console.WriteLine($"{outFile} created");
+
+                if (assemble)
+                {
+                    Process p = new Process();
+                    p.StartInfo.FileName = "java";
+                    p.StartInfo.Arguments = $"-jar jasmin.jar {outFile}";
+
+                    Console.WriteLine("Assembling...");
+                    p.Start();
+
+                    p.WaitForExit();
+                }
             }
             Console.WriteLine("Done!");
         }
