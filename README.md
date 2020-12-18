@@ -2,7 +2,7 @@
 Created as part of a Compilers and Formal Language course during my MSc. It's written in C# 9 targeting .NET 5.0.
 
 # WhileLang
-WhileLang is a imperative language featuring a single type, i32. 
+WhileLang is a imperative language featuring a single type, i32. Code samples can be found in While_Compiler/WhilePrograms 
 
 ## Running
 `cd While_Compiler/While_Compiler`
