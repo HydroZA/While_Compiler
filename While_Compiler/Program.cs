@@ -96,13 +96,22 @@ Or:
             if (outpath == "")
                 outpath = ".";
 
+            Stopwatch sw = new Stopwatch();
+
             Console.WriteLine("Lexing...");
+
+            sw.Start();
             var lexout = lexer.Lex(input);
+            sw.Stop();
+
+            Console.WriteLine($"Legacy Lex Time: {sw.ElapsedMilliseconds}ms");
+
+            sw.Reset();
 
             Console.WriteLine("Parsing...");
             var parseOut = parser.Parse(lexout);
 
-            Stopwatch sw = new Stopwatch();
+            
             if (interpret)
             {
                 Console.WriteLine("Interpreting...\n");
