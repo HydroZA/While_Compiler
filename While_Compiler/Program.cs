@@ -104,7 +104,7 @@ Or:
             var lexout = lexer.Lex(input);
             sw.Stop();
 
-            Console.WriteLine($"Legacy Lex Time: {sw.ElapsedMilliseconds}ms");
+            Console.WriteLine($"New Lex Time: {sw.ElapsedMilliseconds}ms");
 
             sw.Reset();
 
