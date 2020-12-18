@@ -42,7 +42,8 @@ WhileLang is an imperative language featuring a single type, i32. Code samples c
 ```
 ### Statements
 ```
-<statement> ::== if <bexp> then <block> else <block> <statement> ::== skip
+<statement> ::== if <bexp> then <block> else <block>
+<statement> ::== skip
 <statement> ::== <var> := <aexp>
 <statement> ::== while <bexp> do <block>
 <statement> ::== for <var> := <aexp> upto <aexp> do <block>
